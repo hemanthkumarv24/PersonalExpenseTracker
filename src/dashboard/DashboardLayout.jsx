@@ -77,7 +77,7 @@ const StateDashboardLayout = ({ children }) => {
     height: "50px",
     textAlign: "left",
     width: "100%",
-    backgroundColor: stateValue === page ? "#E0E0E0" : "transparent",
+    backgroundColor: "transparent",
   });
 
   const navItems = (color) => (
@@ -85,61 +85,44 @@ const StateDashboardLayout = ({ children }) => {
       <Button
         type="text"
         style={getButtonStyle("dashboard")}
-        onClick={() => handleCall("dashboard", "dashboard")}
+        onClick={() => handleCall("/dashboard", "dashboard")}
       >
         <StarFilled
           style={{
-            color: stateValue === "dashboard" ? "#07273A" : color,
+            color:  color,
           }}
         />
         <span
           style={{
             fontSize: "15px",
             fontWeight: stateValue === "dashboard" ? "800" : "650",
-            color: stateValue === "dashboard" ? "#07273A" : color,
+            color:  color,
           }}
         >
           Dashboard
         </span>
       </Button>
+      
       <Button
         type="text"
-        style={getButtonStyle("expenses")}
-        onClick={() => handleCall("/expenses", "expenses")}
-      >
-        <UsergroupAddOutlined
-          style={{ color: stateValue === "expenses" ? "#07273A" : color }}
-        />
-        <span
-          style={{
-            fontSize: "15px",
-            fontWeight: stateValue === "expenses" ? "800" : "650",
-            color: stateValue === "expenses" ? "#07273A" : color,
-          }}
-        >
-Expenses
-        </span>
-      </Button>
-      <Button
-        type="text"
-        style={getButtonStyle("Income")}
+        style={getButtonStyle("bank")}
         onClick={() =>
-          handleCall("Income", "Income")
+          handleCall("/bank", "bank")
         }
       >
         <UnorderedListOutlined
           style={{
-            color: stateValue === "Income" ? "#07273A" : color,
+            color: stateValue === "bank" ? "#07273A" : color,
           }}
         />
         <span
           style={{
             fontSize: "15px",
-            fontWeight: stateValue === "Income" ? "800" : "650",
-            color: stateValue === "Income" ? "#07273A" : color,
+            fontWeight: stateValue === "bank" ? "800" : "650",
+            color: stateValue === "bank" ? "#07273A" : color,
           }}
         >
-          <div> Income </div>
+          <div> Bank Account </div>
         </span>
       </Button>
       <Button
@@ -169,14 +152,13 @@ Expenses
     setDrawerOpen((prev) => !prev);
   }, []);
   const styles = {
-    nav: {
-      position: 'fixed',
-      top: 0,
-      width: '100%',
-      backgroundColor: '#f8f9fa',
-    //   padding: '10px 0',
-      zIndex: 1000, // Ensure the navigation bar appears above other elements
-    },
+    // nav: {
+    //   position: 'fixed',
+    //   top: 0,
+    //   width: '100%',
+    //   backgroundColor: '#f8f9fa',
+    //   zIndex: 1000, // Ensure the navigation bar appears above other elements
+    // },
     container: {
       maxWidth: '1200px',
     //   margin: '0 auto',
