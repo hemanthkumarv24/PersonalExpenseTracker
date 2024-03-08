@@ -128,7 +128,7 @@ const StateDashboardLayout = ({ children }) => {
       <Button
         type="text"
         style={getButtonStyle("analytics")}
-        onClick={() => handleCall("/analytics", "analytics")}
+        onClick={() => handleCall("", "analytics")}
       >
         <BookOutlined
           style={{

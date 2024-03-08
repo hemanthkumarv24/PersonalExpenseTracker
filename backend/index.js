@@ -56,6 +56,7 @@ app.post('/signup/users', async (req, res) => {
     try {
         const result = await poolQuery('SELECT MAX(UserID) AS maxUserID FROM users');
         console.log(result);
+        console.log(req.body);
 
         // Access the first object in the array
         const latestUserID = result[0].maxUserID;
