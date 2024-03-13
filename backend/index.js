@@ -26,6 +26,8 @@ const dbConfig = {
 
 // Create a MySQL connection pool
 const pool = mysql.createPool(dbConfig);
+var Email=''; 
+var Password='';
 
 
 
@@ -46,6 +48,57 @@ app.get('/',  async (req, res) => {
     console.log("second",data)
   
 });
+function poolQuery(query, values = []) {
+    return new Promise((resolve, reject) => {
+        pool.query(query, values, (error, results) => {
+            if (error) {
+                console.error('Error executing query:', error);
+                reject(error);
+                return;
+            }
+            resolve(results);
+        });
+    });
+}
+
+// Example endpoint for fetching category-wise expense distribution
+// Example endpoint for fetching category-wise expense distribution
+app.get('/analytics/expense-distribution', async (req, res) => {
+    try {
+        const expensesByCategory = await poolQuery(`
+            SELECT c.CategoryName, SUM(e.Amount) AS totalAmount
+            FROM expenses e
+            JOIN categories c ON e.CategoryID = c.CategoryID
+            WHERE e.UserID = 1
+            GROUP BY c.CategoryName
+        `, [1]);
+
+        const labels = expensesByCategory.map(entry => entry.CategoryName);
+        const data = expensesByCategory.map(entry => entry.totalAmount);
+
+        // Create a pie chart using Plotly
+        const pieChart = {
+            labels: labels,
+            values: data,
+            type: 'pie'
+        };
+
+        const layout = {
+            title: 'Expense Distribution',
+            showlegend: true
+        };
+
+        // Convert the Plotly chart to a JSON string for sending as a response
+        const chartJSON = JSON.stringify({ chartData: [pieChart], layout });
+
+        // Include the chart JSON in the response
+        res.json({ labels, data, chart: chartJSON });
+    } catch (error) {
+        console.error('Error fetching or plotting data:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 
 
 
@@ -90,13 +143,28 @@ function poolQuery(query, values = []) {
             resolve(results);
         });
     });
-}
-
+}  
+  
+});
 
 
 app.post('/login', async (req, res) => {
+    function poolQuery(query, values = []) {
+        return new Promise((resolve, reject) => {
+            pool.query(query, values, (error, results) => {
+                if (error) {
+                    console.error('Error executing query:', error);
+                    reject(error);
+                    return;
+                }
+                resolve(results);
+            });
+        });
+    }  
     try {
-        const { Email, Password } = req.body;
+         
+         Password=req.body.Password;
+         Email=req.body.Email;
 
         // Query the database to retrieve the user with the provided email
         const [user] = await poolQuery('SELECT * FROM users WHERE Email = ?', [Email]);
@@ -112,42 +180,111 @@ app.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid password' });
         }
 
-        // User is authenticated, you can provide a token or any other response
-        res.json({ message: 'Login successful', data: { UserID: user.UserID, Username: user.Username } });
+        
+
+          // Calculate the sum of income entries for the user
+          const [incomeSum] = await poolQuery('SELECT SUM(Amount) AS totalIncome FROM income WHERE UserID = ?', [user.UserID]);
+            console.log("Total INcome",incomeSum);
+          // Calculate the sum of expense entries for the user
+          const [expenseSum] = await poolQuery('SELECT SUM(Amount) AS totalExpense FROM expenses WHERE UserID = ?', [user.UserID]);
+          console.log("Total INcome",expenseSum);
+          // Calculate the new balance
+          const newBalance = (incomeSum.totalIncome || 0) - (expenseSum.totalExpense || 0);
+          console.log("Cureent Balance:",newBalance);
+  
+          // Update the balance in the bankaccounts table
+          await poolQuery('UPDATE bankaccounts SET Balance = ? WHERE UserID = ?', [newBalance, user.UserID]);
+          res.json({ message: 'Login successful', data: { UserID: user.UserID, Username: user.Username } });
+
     } catch (error) {
         console.error('Error executing query:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-       
-       
-    
-      
-    
-   
-    
-    
+
+app.post('/expenses', async (req, res) => {
+    try {
+ console.log(Email,"Current Loged in");
+      const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+      console.log("User found", user)
   
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Fetch CategoryID based on the provided category (Assuming you have a categories table)
+      const [category] = await poolQuery('SELECT CategoryID FROM categories WHERE CategoryName = ?', [req.body.Category]);
+      console.log(category,"FOunded CAt")
+      if (!category) {
+        return res.status(404).json({ error: 'Category not found' });
+      }
+  
+      // Get the maximum ExpenseID
+      const result = await poolQuery('SELECT MAX(ExpenseID) AS maxExpenseID FROM expenses');
+      console.log("Expense",result)
+      const maxExpenseID = result[0].maxExpenseID ;
+      const maxval = maxExpenseID ? maxExpenseID + 1 :600;
+     
+      console.log("ExpenseID",maxExpenseID)
+
+      await poolQuery(
+        'INSERT INTO expenses (ExpenseID, UserID, Amount, Description, Date, CategoryID) VALUES (?, ?, ?, ?, ?, ?)',
+        [maxval, user.UserID, req.body.Amount, req.body.Description, req.body.Date, category.CategoryID]
+      );
+  
+      res.json({ message: 'Expense added successfully', data: { ExpenseID: maxval , ...req.body } });
+    } catch (error) {
+      console.error('Error executing query:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+
+
+
+  // ... (previous code)
+
+app.post('/income', async (req, res) => {
+    try {
+        console.log(Email, "Current Logged in");
+        const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+        console.log("User found", user);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Fetch CategoryID based on the provided category (Assuming you have a categories table)
+        const [category] = await poolQuery('SELECT CategoryID FROM categories WHERE CategoryName = ?', [req.body.Category]);
+        console.log(category, "Found Category");
+
+        if (!category) {
+            return res.status(404).json({ error: 'Category not found' });
+        }
+
+        // Get the maximum IncomeID
+        const result = await poolQuery('SELECT MAX(IncomeID) AS maxIncomeID FROM income');
+        console.log("Income", result);
+        const maxIncomeID = result[0].maxIncomeID;
+        const maxval = maxIncomeID ? maxIncomeID + 1 : 700;
+
+        console.log("IncomeID", maxIncomeID);
+
+        await poolQuery(
+            'INSERT INTO income (IncomeID, UserID, Amount, Description, Date, CategoryID) VALUES (?, ?, ?, ?, ?, ?)',
+            [maxval, user.UserID, req.body.Amount, req.body.Description, req.body.Date, category.CategoryID]
+        );
+
+        res.json({ message: 'Income added successfully', data: { IncomeID: maxval, ...req.body } });
+    } catch (error) {
+        console.error('Error executing query:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
+// ... (rest of the code)
 
 
-
-
-// app.get("/",function(req,res)
-// {
-//     res.render("Home.ejs")
-// })
-
-
-// app.post('/upload', (req, res) => {
-    
-      
-//     // Save book information to your database
-  
-//     res.redirect('/');
-//   });
 
 
 
