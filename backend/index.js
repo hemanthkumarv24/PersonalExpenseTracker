@@ -3,6 +3,8 @@ const express = require("express");
 const bodyparser= require("body-parser");
 const { max } = require('moment/moment');
 const app = express();
+const cors = require('cors');
+app.use(cors());
 app.use(express.json());
 app.set('view engine', 'card');
 app.use(bodyparser.urlencoded({extended: true}));

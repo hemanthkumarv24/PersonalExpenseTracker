@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -22,7 +22,6 @@ function Copyright(props) {
         Expense Tracker
       </Link>
       {new Date().getFullYear()}
-      
     </Typography>
   );
 }
@@ -30,24 +29,24 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
 
     try {
-        const response = await axios.post('http://localhost:3002/signup/users', {
-          Username: data.get('firstName'),
-          RegistrationDate: data.get('dateOfRegistration'),
-            Email: data.get('email'),
-            Password: data.get('password'),
-        });
+      const response = await axios.post('http://localhost:3002/signup/users', {
+        Username: data.get('firstName'),
+        Password: data.get('password'),
+        Email: data.get('email'),
+        RegistrationDate: data.get('dateOfRegistration'),
+      });
 
-        console.log('API Response:', response);
+      console.log('API Response:', response);
     } catch (error) {
-        console.error('API Error:', error);
+      console.error('API Error:', error);
     }
-};
+  };
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -63,10 +62,10 @@ export default function SignUp() {
           <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5" onClick={handleSubmit}>
+          <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" Validate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12}>
                 <TextField
@@ -79,7 +78,7 @@ export default function SignUp() {
                   autoFocus
                 />
               </Grid>
-              
+
               <Grid item xs={12}>
                 <TextField
                   required
@@ -107,7 +106,6 @@ export default function SignUp() {
                   fullWidth
                   type='date'
                   id="dateOfRegistration"
-                  // label="Date Of Registration"
                   name="dateOfRegistration"
                   autoComplete="family-name"
                 />
@@ -118,7 +116,7 @@ export default function SignUp() {
                   label="I want to receive inspiration and updates via email."
                 />
               </Grid>
-              
+
             </Grid>
             <Button
               type="submit"
