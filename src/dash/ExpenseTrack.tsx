@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Button, List, Typography, Select } from 'antd';
-// import 'antd/dist/antd.css';
+import axios from 'axios';
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -35,7 +35,7 @@ const ExpenseTracker: React.FC = () => {
     setCategory(value);
   };
 
-  const handleAddExpense = () => {
+  const handleAddExpense = async () => {
     if (amount !== '' && description !== '' && category !== '') {
       const newExpense: Expense = {
         id: expenses.length + 1,
@@ -43,11 +43,19 @@ const ExpenseTracker: React.FC = () => {
         description: description,
         category: category,
       };
-      setExpenses([...expenses, newExpense]);
-      setTotalExpenses(prevTotal => prevTotal + Number(amount));
-      setAmount('');
-      setDescription('');
-      setCategory('');
+
+      // Make a post request to save the expense data
+      try {
+        await axios.post('http://localhost:3002/expenses', newExpense);
+        setExpenses([...expenses, newExpense]);
+        setTotalExpenses(prevTotal => prevTotal + Number(amount));
+        setAmount('');
+        setDescription('');
+        setCategory('');
+      } catch (error) {
+        console.error('API Error:', error);
+        // Handle error, you might want to display an error message to the user
+      }
     }
   };
 
@@ -65,6 +73,7 @@ const ExpenseTracker: React.FC = () => {
           <Option value="Transportation">Transportation</Option>
           <Option value="Entertainment">Entertainment</Option>
           <Option value="Utilities">Utilities</Option>
+          <Option value="Entertainment">Entertainment</Option>
           <Option value="Others">Others</Option>
         </Select>
         <Input

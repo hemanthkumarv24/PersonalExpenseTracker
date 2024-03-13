@@ -167,6 +167,7 @@ app.post('/login', async (req, res) => {
          
          Password=req.body.Password;
          Email=req.body.Email;
+         console.log("Body -----",req.body)
 
         // Query the database to retrieve the user with the provided email
         const [user] = await poolQuery('SELECT * FROM users WHERE Email = ?', [Email]);
@@ -210,6 +211,7 @@ app.post('/expenses', async (req, res) => {
  console.log(Email,"Current Loged in");
       const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
       console.log("User found", user)
+      
   
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
