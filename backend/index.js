@@ -63,43 +63,45 @@ function poolQuery(query, values = []) {
     });
 }
 
-// Example endpoint for fetching category-wise expense distribution
-// Example endpoint for fetching category-wise expense distribution
-app.get('/analytics/expense-distribution', async (req, res) => {
+
+
+app.get('/check-account', async (req, res) => {
     try {
-        const expensesByCategory = await poolQuery(`
-            SELECT c.CategoryName, SUM(e.Amount) AS totalAmount
-            FROM expenses e
-            JOIN categories c ON e.CategoryID = c.CategoryID
-            WHERE e.UserID = 1
-            GROUP BY c.CategoryName
-        `, [1]);
-
-        const labels = expensesByCategory.map(entry => entry.CategoryName);
-        const data = expensesByCategory.map(entry => entry.totalAmount);
-
-        // Create a pie chart using Plotly
-        const pieChart = {
-            labels: labels,
-            values: data,
-            type: 'pie'
-        };
-
-        const layout = {
-            title: 'Expense Distribution',
-            showlegend: true
-        };
-
-        // Convert the Plotly chart to a JSON string for sending as a response
-        const chartJSON = JSON.stringify({ chartData: [pieChart], layout });
-
-        // Include the chart JSON in the response
-        res.json({ labels, data, chart: chartJSON });
+      // Fetch the user ID based on the provided email
+      console.log("Email",Email)
+      const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+      console.log("User found", user);
+  
+      // Query to check if an account exists for the given UserID
+      const accountQuery = 'SELECT * FROM bankaccounts WHERE UserID = ?';
+      const [account] = await poolQuery(accountQuery, [user]);
+  
+      if (!account) {
+        // If no account exists for the given UserID
+        return res.json({ exists: false, message: 'Account not found for the specified user.' });
+      }
+  
+      // If an account exists, send the account details in the response
+      res.json({
+        exists: true,
+        accountDetails: {
+          AccountID: account.AccountID,
+          UserID: account.UserID,
+          AccountNumber: account.AccountNumber,
+          Balance: account.Balance,
+          BankName: account.bank_name,
+          BankBranch: account.bank_branch
+        }
+      });
     } catch (error) {
-        console.error('Error fetching or plotting data:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Error checking account:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+  });
+
+
+
+
 
 
 
