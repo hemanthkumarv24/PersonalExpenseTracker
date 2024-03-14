@@ -255,7 +255,7 @@ app.post('/expenses', async (req, res) => {
       }
   
       // Fetch CategoryID based on the provided category (Assuming you have a categories table)
-      const [category] = await poolQuery('SELECT CategoryID FROM categories WHERE CategoryName = ?', [req.body.Category]);
+      const [category] = await poolQuery('SELECT CategoryID FROM categories WHERE CategoryName = ?', [req.body.category]);
       console.log(category,"FOunded CAt")
       if (!category) {
         return res.status(404).json({ error: 'Category not found' });
@@ -271,7 +271,7 @@ app.post('/expenses', async (req, res) => {
 
       await poolQuery(
         'INSERT INTO expenses (ExpenseID, UserID, Amount, Description, Date, CategoryID) VALUES (?, ?, ?, ?, ?, ?)',
-        [maxval, user.UserID, req.body.Amount, req.body.Description, req.body.Date, category.CategoryID]
+        [maxval, user.UserID, req.body.amount, req.body.description, req.body.date, category.CategoryID]
       );
   
       res.json({ message: 'Expense added successfully', data: { ExpenseID: maxval , ...req.body } });
@@ -287,6 +287,8 @@ app.post('/expenses', async (req, res) => {
 
 app.post('/income', async (req, res) => {
     try {
+
+        console.log("INCOMEEEEEEEEEEEEEE");
         console.log(Email, "Current Logged in");
         const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
         console.log("User found", user);

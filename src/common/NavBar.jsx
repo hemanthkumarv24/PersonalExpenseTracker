@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'; // Assuming you're using React Router f
 import { Form, Input, Button, Row, Col, Card,Typography,Table } from "antd";
 import styled from 'styled-components';      
 import { StyledForm, StyledInput, StyledButton, StyledSelect, StyledLabel } from './FormComponents'
+import axios from 'axios';
 const NavigationBar = () => {
   return (
     <nav style={styles.nav}>
@@ -179,15 +180,18 @@ const ExpenseForm = () => {
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit =  async (e) => {
     e.preventDefault();
+   
     const formData = {
       amount,
+      description,
       date,
       category,
-      description,
+      
     };
-    console.log('Form submitted:', formData);
+    const response = await axios.post('http://localhost:3002/expenses', formData);
+    console.log('Form submitted:', response);
     // You can handle further form submission logic here
   };
 

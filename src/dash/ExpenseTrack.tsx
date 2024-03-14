@@ -43,8 +43,8 @@ const ExpenseTracker: React.FC = () => {
   
       // Make a post request to save the expense data
       try {
-        const response = await axios.post('http://localhost:3002/expenses', newExpense);
-        console.log('Response from server:', response);
+
+        console.log('Response from server:');
         setExpenses([...expenses, newExpense]);
         setTotalExpenses(prevTotal => prevTotal + Number(amount));
         setAmount('');
@@ -90,7 +90,7 @@ const ExpenseTracker: React.FC = () => {
         <Button
           type="primary"
           onClick={handleAddExpense}
-          disabled={!amount || !description || !category}
+        
         >
           Add Expense
         </Button>

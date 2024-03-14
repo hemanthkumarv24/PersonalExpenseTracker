@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Input, Button, Space, Select, DatePicker, Card, Flex, Row, Col } from 'antd';
 import moment from 'moment';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const { Option } = Select;
 
@@ -77,15 +78,30 @@ const ProfitInput: React.FC = () => {
     setCurrentCategory(value);
   };
 
-  const handleAddIncome = () => {
-    const income = parseFloat(currentInput);
-    if (!isNaN(income) && currentDescription && currentDate && currentCategory) {
-      setProfitInputs([...profitInputs, { amount: income, description: currentDescription, date: currentDate.format('YYYY-MM-DD'), category: currentCategory }]);
-      setTotalIncome(totalIncome + income);
-      setCurrentInput('');
-      setCurrentDescription('');
-      setCurrentDate(null);
-      setCurrentCategory('');
+
+  const handleAddIncome = async () => {
+    const incomeData = {
+      Amount: parseFloat(currentInput), // Convert the amount to a floating point number
+      Description: currentDescription,
+      Date: currentDate?.format('YYYY-MM-DD'), // Format the date as a string
+      Category: currentCategory // Assuming CategoryID is selected from the dropdown
+    };
+
+    try {
+      // Send POST request to the server
+      const response = await axios.post('http://localhost:3002/income', incomeData);
+      console.log('Income added successfully:', response.data);
+      
+      // Update local state and reset input fields
+      // setProfitInputs([...profitInputs, incomeData]);
+      // setTotalIncome(totalIncome + incomeData.Amount);
+      // setCurrentInput('');
+      // setCurrentDescription('');
+      // setCurrentDate(null);
+      // setCurrentCategory('');
+    } catch (error) {
+      console.error('Error adding income:', error);
+      // Handle error, such as displaying an error message to the user
     }
   };
 
@@ -142,7 +158,7 @@ const ProfitInput: React.FC = () => {
               >
                 <Option value="salary">Salary</Option>
                 <Option value="business">Business</Option>
-                <Option value="investments">Investments</Option>
+                <Option value="Entertainment">Entertainment</Option>
                 <Option value="other">Other</Option>
               </StyledSelect>
             </Col>
