@@ -120,3 +120,22 @@
   color: #676767;
 
 }
+
+.chart {
+  min-height:280px;
+  max-height:280px;
+}
+
+@media (min-width: 1250px) and (max-width : 1400px) {
+  .chart {
+    min-height:240px;
+    max-height:240px;
+  }
+}
+
+@media (min-width: 1000px) and (max-width : 1250px) {
+  .chart {
+    min-height:200px;
+    max-height:200px;
+  }
+}

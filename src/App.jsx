@@ -6,6 +6,7 @@ import { ConfigProvider } from 'antd';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from './dash/Dashboard';
 import UserBankDetailsForm from './common/Bank';
+import Analytics from './analysis/Analytics';
 
 
 
@@ -23,6 +24,8 @@ function App() {
       <Route path='/sign-up' element={<SignUp/>}/>
       <Route path='/dashboard' element={<Dashboard/>}/>
       <Route path='/bank' element={<UserBankDetailsForm/>}/>
+      <Route path='/analytics' element={<Analytics/>}/>
+
 
 
 </Routes>
