@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Card, Button, Select, Input, Row, Col,Typography } from 'antd';
 import StateDashboardLayout from "../dashboard/DashboardLayout";
+import { setBank } from '../REdux/bankSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 
 const { Option } = Select;
@@ -37,7 +40,7 @@ const StyledSelect = styled(Select)`
   }
 `;
 
-const UserBankDetailsForm = ({ onSubmit}) => {
+const UserBankDetailsForm = () => {
   const [formValues, setFormValues] = useState({
     BankAccountNumber: '',
     ConfirmBankAccountNumber: '',
@@ -45,9 +48,10 @@ const UserBankDetailsForm = ({ onSubmit}) => {
     IFSCCode: '',
     AccountHoldername: '',
     NameOfBank: '',
-    Relationship: '',
+    Card: '',
   });
 
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prevValues) => ({
@@ -55,6 +59,43 @@ const UserBankDetailsForm = ({ onSubmit}) => {
       [name]: value,
     }));
   };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Function to handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+console.log(formValues)
+dispatch(setBank(true));
+navigate('/dashboard');
+
+    try {
+      // Send a POST request to your API endpoint
+      const response = await axios.post('/api/addBankAccount', formValues);
+
+      // Handle success response
+      console.log(response.data);
+      message.success('Bank account added successfully.');
+      dispatch(setBank(true));
+
+      
+      // Reset form values after successful submission
+      setFormValues({
+        BankAccountNumber: '',
+        ConfirmBankAccountNumber: '',
+        BankBranchName: '',
+        IFSCCode: '',
+        AccountHoldername: '',
+        NameOfBank: '',
+        Relationship: '',
+      });
+    } catch (error) {
+      // Handle error response
+      console.error('Error adding bank account:', error);
+      message.error('An error occurred while adding the bank account. Please try again later.');
+    }
+  };
+
 
   
 
@@ -72,7 +113,7 @@ return (
         Bank Account
       </Typography>
   <Card>
-  <StyledForm onSubmit={onSubmit}>
+  <StyledForm onSubmit={handleSubmit}>
   <Row gutter={[16, 16]}>
     <Col xs={24} sm={12} md={8}>
       <StyledLabel htmlFor="BankAccountNumber">Bank Account Number:</StyledLabel>
@@ -113,23 +154,23 @@ return (
           </StyledSelect>
     </Col>
     <Col xs={24} sm={12} md={8}>
-      <StyledLabel htmlFor="Name">Name:</StyledLabel>
+      <StyledLabel htmlFor="AccountHoldername">Name:</StyledLabel>
       <StyledInput
         type="text"
-        id="Name"
-        name="Name"
-        value={formValues.Name}
+        id="AccountHoldername"
+        name="AccountHoldername"
+        value={formValues.AccountHoldername}
         onChange={handleChange}
         required
       />
     </Col>
     <Col xs={24} sm={12} md={8}>
-      <StyledLabel htmlFor="Address">Address:</StyledLabel>
+      <StyledLabel htmlFor="Card">Card Number:</StyledLabel>
       <StyledInput
         type="text"
-        id="Address"
-        name="Address"
-        value={formValues.Address}
+        id="Card"
+        name="Card"
+        value={formValues.Card}
         onChange={handleChange}
         required
       />

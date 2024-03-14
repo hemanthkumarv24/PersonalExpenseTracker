@@ -24,13 +24,7 @@ import {
   CaretDownOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-// import useDeviceType from "../../../hooks/useDeviceType";
-// import styles from "../../nav/style.module.css";
-// import { useDispatch, useSelector } from "react-redux";
-// import {
-//   setStateValue,
-//   selectStateValue,
-// } from "../../../store/LayoutSlice";
+
 
 const { Sider, Content } = Layout;
 
@@ -38,8 +32,6 @@ const StateDashboardLayout = ({ children }) => {
   const [visible, setVisible] = useState(true);
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
-//   const { isMobile } = useDeviceType();
-//   const dispatch = useDispatch();
   const stateValue = 'dashboard';
 
   const showDrawer = () => {
