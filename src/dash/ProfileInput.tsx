@@ -79,6 +79,39 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
     setCurrentCategory(value);
   };
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:3002/updatebalance');
+      console.log(response.data);
+      // Update your local state or do any necessary operations with the fetched data
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // Handle error, such as displaying an error message to the user
+    }
+  };
+
+
+  const [balance1,setbalance1]=useState(0);
+  
+ 
+
+  const fetchDatabalance= async () => {
+    try {
+      const response = await axios.get('http://localhost:3002/check-account');
+      
+  
+      setbalance1(response.data.accountDetails.Balance);
+      
+ 
+
+      console.log(response) // Change the URL to your Express route
+      // setData(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+    fetchDatabalance();
 
   const handleAddIncome = async () => {
     const incomeData = {
@@ -89,9 +122,14 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
     };
 
     try {
-      // Send POST request to the server
+      
       const response = await axios.post('http://localhost:3002/income', incomeData);
       console.log('Income added successfully:', response.data);
+      
+      await fetchData();
+      await fetchDatabalance();
+     
+
       
       // Update local state and reset input fields
       // setProfitInputs([...profitInputs, incomeData]);
@@ -119,7 +157,7 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
         <div style={{ marginBottom: '20px', fontWeight: 'bold', fontSize: '18px' }}>ATM Card</div>
         <div style={{ marginBottom: '10px', fontSize: '16px' }}>Card Number: {accountnumber['accountnumber']}</div>
         <div style={{ fontSize: '16px' }}>Name: {accountnumber['username']}</div>
-        <p style={{ fontWeight: 'bold' }}>Balance: {accountnumber['balance']}</p>
+        <p style={{ fontWeight: 'bold' }}>Balance: {balance1}</p>
       </Card>
       <div>
         <StyledSpace>

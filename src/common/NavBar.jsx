@@ -174,6 +174,34 @@ const passwordEntered = (e) => {
     // buttonEnabled(username, password)
 }
 
+const fetchDatabalance= async () => {
+  try {
+    const response = await axios.get('http://localhost:3002/check-account');
+    
+
+    setbalance1(response.data.accountDetails.Balance);
+    
+
+
+    console.log(response) // Change the URL to your Express route
+    // setData(response.data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+};
+
+  
+const fetchData = async () => {
+  try {
+    const response = await axios.get('http://localhost:3002/updatebalance');
+    console.log("HERE",response.data);
+    // Update your local state or do any necessary operations with the fetched data
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    // Handle error, such as displaying an error message to the user
+  }
+};
+
 const ExpenseForm = () => {
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState('');
@@ -192,6 +220,9 @@ const ExpenseForm = () => {
     };
     const response = await axios.post('http://localhost:3002/expenses', formData);
     console.log('Form submitted:', response);
+    await fetchData();
+    await fetchDatabalance();
+    window.location.href = 'http://localhost:5173/dashboard'
     // You can handle further form submission logic here
   };
 

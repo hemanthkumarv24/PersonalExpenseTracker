@@ -6,6 +6,7 @@ import React from 'react';
 
 const ExpenseBased = () => {
   // Hardcoded sample data for expenses
+  
   const sampleData = {
     food: 200,
     transportation: 100,

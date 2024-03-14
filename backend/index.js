@@ -329,9 +329,26 @@ app.post('/income', async (req, res) => {
     }
 });
 
-// ... (rest of the code)
+app.get('/updatebalance', async (req, res) => {
+
+    const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
 
 
+  // Calculate the sum of income entries for the user
+  const [incomeSum] = await poolQuery('SELECT SUM(Amount) AS totalIncome FROM income WHERE UserID = ?', [user]);
+  console.log("Total INcome",incomeSum);
+// Calculate the sum of expense entries for the user
+const [expenseSum] = await poolQuery('SELECT SUM(Amount) AS totalExpense FROM expenses WHERE UserID = ?', [user]);
+console.log("Total INcome",expenseSum);
+// Calculate the new balance
+const newBalance = (incomeSum.totalIncome || 0) - (expenseSum.totalExpense || 0);
+console.log("Cureent Balance:",newBalance);
+
+// Update the balance in the bankaccounts table
+await poolQuery('UPDATE bankaccounts SET Balance = ? WHERE UserID = ?', [newBalance,user]);
+res.send("Success")
+
+});
 
 
 
