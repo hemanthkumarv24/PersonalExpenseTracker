@@ -6,7 +6,6 @@ const { Text } = Typography;
 const { Option } = Select;
 
 interface Expense {
-  id: number;
   amount: number;
   description: string;
   category: string;
@@ -34,19 +33,18 @@ const ExpenseTracker: React.FC = () => {
   const handleCategoryChange = (value: string) => {
     setCategory(value);
   };
-
   const handleAddExpense = async () => {
-    if (amount !== '' && description !== '' && category !== '') {
+    
       const newExpense: Expense = {
-        id: expenses.length + 1,
         amount: Number(amount),
         description: description,
         category: category,
       };
-
+  
       // Make a post request to save the expense data
       try {
-        await axios.post('http://localhost:3002/expenses', newExpense);
+        const response = await axios.post('http://localhost:3002/expenses', newExpense);
+        console.log('Response from server:', response);
         setExpenses([...expenses, newExpense]);
         setTotalExpenses(prevTotal => prevTotal + Number(amount));
         setAmount('');
@@ -56,9 +54,9 @@ const ExpenseTracker: React.FC = () => {
         console.error('API Error:', error);
         // Handle error, you might want to display an error message to the user
       }
-    }
+    
   };
-
+  
   return (
     <div style={{ maxWidth: '400px', margin: '0 auto' }}>
       <h1>Personal Expense Tracker</h1>
@@ -73,7 +71,6 @@ const ExpenseTracker: React.FC = () => {
           <Option value="Transportation">Transportation</Option>
           <Option value="Entertainment">Entertainment</Option>
           <Option value="Utilities">Utilities</Option>
-          <Option value="Entertainment">Entertainment</Option>
           <Option value="Others">Others</Option>
         </Select>
         <Input

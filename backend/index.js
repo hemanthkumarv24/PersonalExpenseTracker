@@ -206,11 +206,48 @@ app.post('/login', async (req, res) => {
 });
 
 
+app.post('/createbankaccounts', async (req, res) => {
+    try {
+        console.log(Email, "Current Logged in");
+        
+        // Fetch the user ID based on the provided email
+        const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+        console.log("User found", user);
+        
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Get the maximum AccountID
+        const result = await poolQuery('SELECT MAX(AccountID) AS maxAccountID FROM bankaccounts');
+        const maxAccountID = result[0].maxAccountID;
+        const newAccountID = maxAccountID ? maxAccountID + 1 : 1;
+
+        // Extract bank account details from request body
+        const { AccountNumber, Balance, bank_name, bank_branch } = req.body;
+
+        // Insert bank account details into the bankaccounts table
+        await poolQuery(
+            'INSERT INTO bankaccounts (AccountID, UserID, AccountNumber, Balance, bank_name, bank_branch) VALUES (?, ?, ?, ?, ?, ?)',
+            [newAccountID, user.UserID, AccountNumber, Balance, bank_name, bank_branch]
+        );
+
+        res.json({ message: 'Bank account added successfully', data: { AccountID: newAccountID, UserID: user.UserID, AccountNumber, Balance, bank_name, bank_branch } });
+    } catch (error) {
+        console.error('Error executing query:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+
+
 app.post('/expenses', async (req, res) => {
     try {
  console.log(Email,"Current Loged in");
       const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
       console.log("User found", user)
+      console.log("Expense body",req.body)
       
   
       if (!user) {
