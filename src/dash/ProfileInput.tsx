@@ -54,14 +54,15 @@ const StyledDatePicker = styled(DatePicker)`
   margin-bottom:10px;
 
 `;
-const ProfitInput: React.FC = () => {
+const ProfitInput: React.FC = (accountnumber,balance) => {
+
   const [profitInputs, setProfitInputs] = useState<{ amount: number; description: string; date: string; category: string }[]>([]);
   const [currentInput, setCurrentInput] = useState<string>('');
   const [currentDescription, setCurrentDescription] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<moment.Moment | null>(null);
   const [currentCategory, setCurrentCategory] = useState<string>('');
   const [totalIncome, setTotalIncome] = useState<number>(0);
-
+  console.log(accountnumber['username']);
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentInput(event.target.value);
   };
@@ -116,9 +117,9 @@ const ProfitInput: React.FC = () => {
         bodyStyle={{ padding: '20px' }}
       >
         <div style={{ marginBottom: '20px', fontWeight: 'bold', fontSize: '18px' }}>ATM Card</div>
-        <div style={{ marginBottom: '10px', fontSize: '16px' }}>Card Number: **** **** **** 1234</div>
-        <div style={{ fontSize: '16px' }}>Name: John Doe</div>
-        <p style={{ fontWeight: 'bold' }}>Total income: {formatCurrency(totalIncome)}</p>
+        <div style={{ marginBottom: '10px', fontSize: '16px' }}>Card Number: {accountnumber['accountnumber']}</div>
+        <div style={{ fontSize: '16px' }}>Name: {accountnumber['username']}</div>
+        <p style={{ fontWeight: 'bold' }}>Balance: {accountnumber['balance']}</p>
       </Card>
       <div>
         <StyledSpace>

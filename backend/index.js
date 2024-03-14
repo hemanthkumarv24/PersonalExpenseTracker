@@ -71,6 +71,7 @@ app.get('/check-account', async (req, res) => {
       console.log("Email",Email)
       const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
       console.log("User found", user);
+      const [username] = await poolQuery('SELECT Username FROM users WHERE Email = ?', [Email]);
   
       // Query to check if an account exists for the given UserID
       const accountQuery = 'SELECT * FROM bankaccounts WHERE UserID = ?';
@@ -85,6 +86,7 @@ app.get('/check-account', async (req, res) => {
       res.json({
         exists: true,
         accountDetails: {
+        username:username,
           AccountID: account.AccountID,
           UserID: account.UserID,
           AccountNumber: account.AccountNumber,
