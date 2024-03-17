@@ -1,23 +1,13 @@
+import React, { useEffect, useState } from 'react';
 import { Card } from 'antd';
-import { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import '../analysis/cards.css';
-import React from 'react';
+import axios from 'axios'; // Import axios for API requests
 
 const IncomeBased = () => {
-  // Hardcoded sample data
-  const sampleData = {
-    salary: 250,
-    business: 150,
-    investments: 100,
-    other: 50
-  };
-
-  const categories = ['Salary', 'Business', 'Investments', 'Other'];
-  const series = categories.map(category => sampleData[category.toLowerCase()]);
-
+  const [chartData, setChartData] = useState({ categories: [], series: [] });
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 400);
-  const [fontSize, setFontSize] = useState<'12px' | '3px'>('12px');
+  const [fontSize, setFontSize] = useState('12px');
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,6 +15,22 @@ const IncomeBased = () => {
       setFontSize(window.innerWidth < 350 ? '3px' : '12px');
     };
     window.addEventListener('resize', handleResize);
+
+    // Fetch data from the API
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3002/totalincomebycategory');
+        const data = response.data.totalincomeByCategory;
+        const categories = data.map(item => item.categoryName);
+        const series = data.map(item => item.totalincome);
+        setChartData({ categories, series });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -35,7 +41,7 @@ const IncomeBased = () => {
       text: 'Income Wise Data',
       align: 'left',
       style: {
-        fontSize: "14px",
+        fontSize: '14px',
         fontWeight: 700,
         color: '#07273a',
       },
@@ -54,14 +60,14 @@ const IncomeBased = () => {
               fontSize,
               formatter: (w) => {
                 const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                return isSmallScreen ? `${total}` : `${total}`;
+                return isSmallScreen ? `${total}` :`${total}`;
               },
             },
           },
         },
       },
     },
-    labels: categories,
+    labels: chartData.categories,
     legend: {
       position: 'left',
       offsetY: 50,
@@ -76,9 +82,10 @@ const IncomeBased = () => {
   return (
     <Card className="chart" style={{ width: '100%', textAlign: 'center', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#fff', marginBottom: '5px' }}>
       <ReactApexChart
+        key={chartData.series.length} // Add this line
         type="donut"
         options={options}
-        series={series}
+        series={chartData.series}
       />
     </Card>
   );

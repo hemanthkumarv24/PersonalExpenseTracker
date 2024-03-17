@@ -1,51 +1,13 @@
+import React, { useEffect, useState } from 'react';
 import { Card } from 'antd';
-import { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import '../analysis/cards.css';
-import React from 'react';
+import axios from 'axios'; // Import axios for API requests
 
 const ExpenseBased = () => {
-  // Hardcoded sample data for expenses
-  
-  const sampleData = {
-    food: 200,
-    transportation: 100,
-    entertainment: 150,
-    utilities: 80,
-    DiningOut:80,
-    Entertainment:80,
-    Socializing:80,
-    Travel:80,
-    Fitness:80,
-    Electronics:80,
-    HomeDecor:80,
-    Events:80,
-    Entertainment:80,
-    Education:80,
-    HomeAppliances:70
-
-
-  };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  const categories = ['Food', 'Transportation', 'Entertainment', 'Utilities'];
-  const series = categories.map(category => sampleData[category.toLowerCase()]);
-
+  const [chartData, setChartData] = useState({ categories: [], series: [] });
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 400);
-  const [fontSize, setFontSize] = useState<'12px' | '3px'>('12px');
+  const [fontSize, setFontSize] = useState('12px');
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,6 +15,26 @@ const ExpenseBased = () => {
       setFontSize(window.innerWidth < 350 ? '3px' : '12px');
     };
     window.addEventListener('resize', handleResize);
+
+    // Fetch data from the API
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3002/totalexpensesbycategory');
+        const data = response.data.totalExpensesByCategory;
+        console.log(response);
+        const categories = data.map(item => item.categoryName);
+        console.log(categories);
+        const series = data.map(item => item.totalExpense);
+        console.log(series);
+        setChartData({ categories, series });
+        console.log(chartData.series)
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -63,7 +45,7 @@ const ExpenseBased = () => {
       text: 'Expense Wise Data',
       align: 'left',
       style: {
-        fontSize: "14px",
+        fontSize: '14px',
         fontWeight: 700,
         color: '#07273a',
       },
@@ -89,7 +71,7 @@ const ExpenseBased = () => {
         },
       },
     },
-    labels: categories,
+    labels: chartData.categories,
     legend: {
       position: 'left',
       offsetY: 50,
@@ -103,11 +85,12 @@ const ExpenseBased = () => {
 
   return (
     <Card className="chart" style={{ width: '100%', textAlign: 'center', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#fff', marginBottom: '5px' }}>
-      <ReactApexChart
-        type="donut"
-        options={options}
-        series={series}
-      />
+     <ReactApexChart
+  key={chartData.series.length} // Add this line
+  type="donut"
+  options={options}
+  series={chartData.series}
+/>
     </Card>
   );
 };

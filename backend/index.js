@@ -390,6 +390,151 @@ app.get('/uniquecategory', async (req, res) => {
 
 
 
+// Endpoint to retrieve total expenses for each category for a specific user
+app.get('/totalexpensesbycategory', async (req, res) => {
+    try {
+        // Retrieve the UserID based on the provided Email
+        const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        console.log("USERID:::::",user)
+        // Fetch all unique categories for the user
+        const categories = await poolQuery('SELECT DISTINCT CategoryID FROM expenses WHERE UserID = ?', [user.UserID]);
+        console.log("UNIQUE CATEG",categories)
+        // Array to store the total expenses for each category
+        const totalExpensesByCategory = [];
+
+        // Iterate over each category
+        for (const category of categories) {
+            // Retrieve the category name
+            const [categoryName] = await poolQuery('SELECT CategoryName FROM categories WHERE CategoryID = ?', [category.CategoryID]);
+
+            // Calculate the total expenses for the category
+            const [totalExpense] = await poolQuery('SELECT SUM(Amount) AS totalExpense FROM expenses WHERE UserID = ? AND CategoryID = ?', [user.UserID, category.CategoryID]);
+
+            // Push category name and total expense to the result array
+            totalExpensesByCategory.push({
+                categoryName: categoryName.CategoryName,
+                totalExpense: totalExpense.totalExpense || 0 // If no expense found, default to 0
+            });
+        }
+
+        // Send the result as JSON response
+        res.json({ totalExpensesByCategory });
+    } catch (error) {
+        console.error('Error fetching total expenses by category:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.get('/totalincomebycategory', async (req, res) => {
+    try {
+        // Retrieve the UserID based on the provided Email
+        const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        console.log("USERID:::::",user)
+        // Fetch all unique categories for the user
+        const categories = await poolQuery('SELECT DISTINCT CategoryID FROM income WHERE UserID = ?', [user.UserID]);
+        console.log("UNIQUE CATEG",categories)
+        // Array to store the total expenses for each category
+        const totalincomeByCategory = [];
+
+        // Iterate over each category
+        for (const category of categories) {
+            // Retrieve the category name
+            const [categoryName] = await poolQuery('SELECT CategoryName FROM categories WHERE CategoryID = ?', [category.CategoryID]);
+
+            // Calculate the total expenses for the category
+            const [totalincome] = await poolQuery('SELECT SUM(Amount) AS totalincome FROM income WHERE UserID = ? AND CategoryID = ?', [user.UserID, category.CategoryID]);
+
+            // Push category name and total expense to the result array
+            totalincomeByCategory.push({
+                categoryName: categoryName.CategoryName,
+                totalincome: totalincome.totalincome || 0 // If no expense found, default to 0
+            });
+        }
+
+        // Send the result as JSON response
+        res.json({ totalincomeByCategory });
+    } catch (error) {
+        console.error('Error fetching total expenses by category:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+app.get('/totalexpensesbymonth', async (req, res) => {
+    try {
+        // Retrieve the UserID based on the provided Email
+        const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Fetch all unique months for the user's expenses
+        const uniqueMonths = await poolQuery('SELECT DISTINCT MONTH(Date) AS month FROM expenses WHERE UserID = ?', [user.UserID]);
+
+        // Object to store total expenses for each month
+        const totalExpensesByMonth = {};
+
+        // Iterate over each unique month
+        for (const { month } of uniqueMonths) {
+            // Retrieve the month name from the month number (e.g., 1 for January)
+            const monthName = new Date(2000, month - 1, 1).toLocaleString('default', { month: 'long' });
+
+            // Calculate the total expenses for the month
+            const [totalExpenseResult] = await poolQuery('SELECT SUM(Amount) AS totalExpense FROM expenses WHERE UserID = ? AND MONTH(Date) = ?', [user.UserID, month]);
+            const totalExpense = totalExpenseResult.totalExpense || 0;
+
+            // Store total expenses for the month in the object
+            totalExpensesByMonth[monthName] = totalExpense;
+        }
+
+        // Send the result as JSON response
+        res.json({ totalExpensesByMonth });
+    } catch (error) {
+        console.error('Error fetching total expenses by month:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+
+
+
+app.get('/AccountData', async (req, res) => {
+    try {
+        const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+        const [incomeSum] = await poolQuery('SELECT SUM(Amount) AS totalIncome FROM income WHERE UserID = ?', [user.UserID]);
+        console.log("Total INcome",incomeSum);
+       // Calculate the sum of expense entries for the user
+       const [expenseSum] = await poolQuery('SELECT SUM(Amount) AS totalExpense FROM expenses WHERE UserID = ?', [user.UserID]);
+       console.log("Total INcome",expenseSum);
+       // Calculate the new balance
+       const newBalance = (incomeSum.totalIncome || 0) - (expenseSum.totalExpense || 0);
+       console.log("Cureent Balance:",newBalance);
+        
+
+  
+        res.json({ Income:incomeSum,Expense:expenseSum,Balance:newBalance });
+    } catch (error) {
+        console.error('Error fetching total expenses by category:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+
+
+ // Calculate the sum of income entries for the user
+
+
 
 
 
