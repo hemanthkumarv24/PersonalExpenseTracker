@@ -102,15 +102,6 @@ app.get('/check-account', async (req, res) => {
   });
 
 
-
-
-
-
-
-
-
-
-
 app.post('/signup/users', async (req, res) => {
     try {
         const result = await poolQuery('SELECT MAX(UserID) AS maxUserID FROM users');
@@ -349,6 +340,57 @@ await poolQuery('UPDATE bankaccounts SET Balance = ? WHERE UserID = ?', [newBala
 res.send("Success")
 
 });
+
+app.get('/listexpenses', async (req, res) => {
+    const [userID] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+
+    try {
+        await pool.query(
+            'SELECT  expenses.*,  categories.CategoryName FROM expenses JOIN categories ON expenses.CategoryID = categories.CategoryID WHERE userID = ?',
+            [userID],
+            (error, results) => {
+                if (error) {
+                    console.error('Error executing query:', error);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                    return;
+                }
+                const expenses = results;
+                console.log("Expenses data for user ID", userID, ":", expenses);
+                res.json(expenses);
+            }
+        );
+    } catch (error) {
+        console.error('Error fetching expenses:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+app.get('/uniquecategory', async (req, res) => {
+    const [userID] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+
+    try {
+        await pool.query(
+            'SELECT DISTINCT categories.CategoryName FROM expenses JOIN categories ON expenses.CategoryID = categories.CategoryID WHERE userID = ?',
+            [userID],
+            (error, results) => {
+                if (error) {
+                    console.error('Error executing query:', error);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                    return;
+                }
+                const categories = results;
+                console.log("Unique categories data for user ID", userID, ":", categories);
+                res.json(categories);
+            }
+        );
+    } catch (error) {
+        console.error('Error fetching expenses:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+
+
 
 
 

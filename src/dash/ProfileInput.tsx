@@ -195,10 +195,20 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
                 onChange={handleCategoryChange}
                 style={{ width: '100%', marginBottom: '10px' }}
               >
-                <Option value="salary">Salary</Option>
-                <Option value="business">Business</Option>
+
+
+
+
+                <Option value=" Dining Out"> Dining Out</Option>
                 <Option value="Entertainment">Entertainment</Option>
-                <Option value="other">Other</Option>
+                <Option value="Socializing">Socializing</Option>
+                <Option value="Travel">Travel</Option>
+                <Option value="Fitness">Fitness</Option>
+                <Option value="Electronics">Electronics</Option>
+                <Option value="Home Decor">Home Decor</Option>
+                <Option value="Events">Events</Option>
+                <Option value="Education">Education</Option>
+                <Option value="Home Appliances">Home Appliances</Option>
               </StyledSelect>
             </Col>
             <Col md={16} xs={16} sm={16} lg={16}>

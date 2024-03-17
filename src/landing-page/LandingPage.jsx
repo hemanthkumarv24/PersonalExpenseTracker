@@ -47,14 +47,7 @@ function ToggleCustomTheme({ showCustomTheme, toggleCustomTheme }) {
           },
         }}
       >
-        {/* <ToggleButton value>
-          <AutoAwesomeRoundedIcon sx={{ fontSize: '20px', mr: 1 }} />
-          Custom theme
-        </ToggleButton> */}
-        {/* <ToggleButton value={false}>
-          <SvgMaterialDesign sx={{ fontSize: '20px', mr: 1 }} />
-          Material Design
-        </ToggleButton> */}
+       
       </ToggleButtonGroup>
     </Box>
   );

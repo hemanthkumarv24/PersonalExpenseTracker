@@ -11,8 +11,35 @@ const ExpenseBased = () => {
     food: 200,
     transportation: 100,
     entertainment: 150,
-    utilities: 80
+    utilities: 80,
+    DiningOut:80,
+    Entertainment:80,
+    Socializing:80,
+    Travel:80,
+    Fitness:80,
+    Electronics:80,
+    HomeDecor:80,
+    Events:80,
+    Entertainment:80,
+    Education:80,
+    HomeAppliances:70
+
+
   };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   const categories = ['Food', 'Transportation', 'Entertainment', 'Utilities'];
   const series = categories.map(category => sampleData[category.toLowerCase()]);

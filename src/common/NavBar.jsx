@@ -5,6 +5,7 @@ import { Form, Input, Button, Row, Col, Card,Typography,Table } from "antd";
 import styled from 'styled-components';      
 import { StyledForm, StyledInput, StyledButton, StyledSelect, StyledLabel } from './FormComponents'
 import axios from 'axios';
+import  {  useEffect } from 'react';
 const NavigationBar = () => {
   return (
     <nav style={styles.nav}>
@@ -207,8 +208,22 @@ const ExpenseForm = () => {
   const [date, setDate] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
+  const [categories, setCategories] = useState([]);
 
-  const handleSubmit =  async (e) => {
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:3002/uniquecategory');
+        setCategories(response.data); // Assuming the response data is an array of category objects with keys 'CategoryID' and 'CategoryName'
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
    
     const formData = {
@@ -216,7 +231,6 @@ const ExpenseForm = () => {
       description,
       date,
       category,
-      
     };
     const response = await axios.post('http://localhost:3002/expenses', formData);
     console.log('Form submitted:', response);
@@ -268,10 +282,11 @@ const ExpenseForm = () => {
             required
           >
             <option value="">Select category</option>
-            <option value="Food">Food</option>
-            <option value="Transportation">Transportation</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Utilities">Utilities</option>
+            {categories.map((category) => (
+              <option key={category.CategoryID} value={category.CategoryName}>
+                {category.CategoryName}
+              </option>
+            ))}
           </StyledSelect>
           <StyledLabel htmlFor="description">Description:</StyledLabel>
           <StyledInput
@@ -291,52 +306,45 @@ const ExpenseForm = () => {
 
 
 const RecentTransactions = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3002/listexpenses');
+        setData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array ensures the effect runs only once, after the initial render
+
   const columns = [
     {
-      title: 'Transaction',
-      dataIndex: 'transaction',
-      key: 'transaction',
-    },
-    {
       title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-    },
-    {
-      title: 'Category',
-      dataIndex: 'category',
-      key: 'category',
+      dataIndex: 'Amount', // Use 'Amount' instead of 'amount' to match the data key
+      key: 'Amount',
     },
     {
       title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
+      dataIndex: 'Description', // Use 'Description' instead of 'description' to match the data key
+      key: 'Description',
+    },
+    {
+      title: 'Date',
+      dataIndex: 'Date', // Use 'Date' instead of 'date' to match the data key
+      key: 'Date',
+    },
+    {
+      title: 'Category',
+      dataIndex: 'CategoryName', // Use 'Category' instead of 'category' to match the data key
+      key: 'CategoryName',
     },
   ];
+  
 
-  const data = [
-    {
-      key: '1',
-      transaction: 'Transaction 1',
-      amount: '$50',
-      category: 'Food',
-      description: 'Lunch',
-    },
-    {
-      key: '2',
-      transaction: 'Transaction 2',
-      amount: '$30',
-      category: 'Transportation',
-      description: 'Gas',
-    },
-    {
-      key: '3',
-      transaction: 'Transaction 3',
-      amount: '$100',
-      category: 'Shopping',
-      description: 'Clothes',
-    },
-  ];
 
   return (
     <div style={{ maxWidth: '600px', margin: '20px auto', padding: '20px', borderRadius: '5px',}}>
@@ -351,7 +359,7 @@ const RecentTransactions = () => {
         >
           Recent Transactions
         </Typography>
-        <StyledTable columns={columns} dataSource={data} pagination={false} />    </div>
+        <StyledTable columns={columns} dataSource={data} pagination={true} />    </div>
   );
 };
 
@@ -360,3 +368,5 @@ const RecentTransactions = () => {
 
 export default NavigationBar;
 export { ExpenseForm, RecentTransactions };
+
+
