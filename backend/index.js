@@ -528,6 +528,8 @@ app.get('/AccountData', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+
 app.get('/totalincomeexpensebymonth', async (req, res) => {
     try {
         // Retrieve the UserID based on the provided Email
@@ -538,13 +540,19 @@ app.get('/totalincomeexpensebymonth', async (req, res) => {
         }
 
         // Fetch all unique months for the user's expenses
-        const uniqueMonths = await poolQuery('SELECT DISTINCT MONTH(Date) AS month FROM expenses WHERE UserID = ?', [user.UserID]);
+        const uniqueExpenseMonths = await poolQuery('SELECT DISTINCT MONTH(Date) AS month FROM expenses WHERE UserID = ?', [user.UserID]);
+
+        // Fetch all unique months for the user's income
+        const uniqueIncomeMonths = await poolQuery('SELECT DISTINCT MONTH(Date) AS month FROM income WHERE UserID = ?', [user.UserID]);
+
+        // Combine unique months from both expense and income tables
+        const allUniqueMonths = [...new Set([...uniqueExpenseMonths.map(({ month }) => month), ...uniqueIncomeMonths.map(({ month }) => month)])];
 
         // Object to store total income and expense for each month
         const totalIncomeExpenseByMonth = {};
 
         // Iterate over each unique month
-        for (const { month } of uniqueMonths) {
+        for (const month of allUniqueMonths) {
             // Retrieve the month name from the month number (e.g., 1 for January)
             const monthName = new Date(Date.UTC(2000, month - 1, 1)).toLocaleString('default', { month: 'long' });
 
