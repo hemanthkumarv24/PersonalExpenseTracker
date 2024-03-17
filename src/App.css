@@ -139,3 +139,17 @@
     max-height:200px;
   }
 }
+
+
+.no-hover-table thead th {
+  background-color: transparent !important; /* Keep the original background color */
+  color: #07273A; /* Set the color of the header text */
+}
+
+.no-hover-table thead th:hover {
+  background-color: transparent !important; /* Prevent color change on hover */
+}
+
+.no-hover-table thead th.ant-table-column-sort {
+  background-color: transparent !important; /* Prevent color change on sort */
+}

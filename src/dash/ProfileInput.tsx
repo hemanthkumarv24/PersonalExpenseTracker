@@ -60,8 +60,6 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
   const [currentInput, setCurrentInput] = useState<string>('');
   const [currentDescription, setCurrentDescription] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<moment.Moment | null>(null);
-  const today = new Date().toISOString().split('T')[0]; 
-
   const [currentCategory, setCurrentCategory] = useState<string>('');
   const [totalIncome, setTotalIncome] = useState<number>(0);
   console.log(accountnumber['username']);
@@ -95,7 +93,9 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
 
   const [balance1,setbalance1]=useState(0);
   
- 
+  const disabledFutureDate = (currentDate) => {
+    return currentDate && currentDate > moment().endOf('day');
+  };
 
   const fetchDatabalance= async () => {
     try {
@@ -185,11 +185,11 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
             <Col xs={24} sm={12} md={8} lg={8}>
               <StyledLabel htmlFor="dateInput">Select Date:</StyledLabel>
               <StyledDatePicker
-                id="dateInput"
-                value={currentDate}
-                onChange={handleDateChange}
-                max={today}
-              />
+              id="dateInput"
+              value={currentDate}
+              onChange={handleDateChange}
+              disabledDate={disabledFutureDate} // Add this prop to disable future dates
+            />
               <StyledLabel htmlFor="categoryInput">Select Income Category:</StyledLabel>
               <br />
               <StyledSelect

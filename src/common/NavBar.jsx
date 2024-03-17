@@ -332,28 +332,32 @@ const RecentTransactions = () => {
       title: 'Amount',
       dataIndex: 'Amount',
       key: 'Amount',
-      sorter: (a, b) => a.Amount - b.Amount, // Add sorter for Amount
+      sorter: (a, b) => a.Amount - b.Amount,
     },
     {
       title: 'Description',
       dataIndex: 'Description',
       key: 'Description',
-      sorter: (a, b) => a.Description.localeCompare(b.Description), // Add sorter for Description
+      sorter: (a, b) => a.Description.localeCompare(b.Description),
     },
     {
       title: 'Date',
       dataIndex: 'Date',
       key: 'Date',
-      render: (text) => text.split('T')[0], // Display only the date part
-      sorter: (a, b) => new Date(a.Date) - new Date(b.Date), // Add sorter for Date
+      render: (text) => {
+        const date = new Date(text);
+        return `${date.getDate().toString().padStart(2, '0')}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getFullYear().toString().slice(-2)}`;
+      },
+      sorter: (a, b) => new Date(a.Date) - new Date(b.Date),
     },
     {
       title: 'Category',
       dataIndex: 'CategoryName',
       key: 'CategoryName',
-      sorter: (a, b) => a.CategoryName.localeCompare(b.CategoryName), // Add sorter for Category
+      sorter: (a, b) => a.CategoryName.localeCompare(b.CategoryName),
     },
   ];
+  
   
   
 
@@ -371,7 +375,18 @@ const RecentTransactions = () => {
         >
           Recent Transactions
         </Typography>
-        <StyledTable columns={columns} dataSource={data} pagination={true} />    </div>
+        <StyledTable
+  className="no-hover-table"
+  columns={columns}
+  dataSource={data}
+  pagination={{
+    defaultPageSize: 5,
+    showSizeChanger: true,
+    pageSizeOptions: ['5', '10', '15', '20'],
+  }}
+/>
+
+    </div>
   );
 };
 

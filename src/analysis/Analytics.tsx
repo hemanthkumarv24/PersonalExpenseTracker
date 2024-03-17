@@ -20,6 +20,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import StateDashboardLayout from "../dashboard/DashboardLayout";
 import ExpensesByMonthChart from "./MonthlyExpense";
+import IncomeVsExpenseChart from "./IncomeVsExpenseChart ";
 // import { report } from "process";
 
 
@@ -67,9 +68,20 @@ const Analytics = () => {
       <Card style={{ background: 'rgba(255, 255, 255, 0)', boxShadow: "0 4px 8px rgba(0, 0, 0, 0)" }}>
        
         
-            <Cards/>
-            <ExpensesByMonthChart/>
+            <Cards />
+        
        </Card>
+
+       <Row gutter={[10,10]}>
+        <Col xl={12} lg={12} md={24} sm={24}>
+       <ExpensesByMonthChart/>
+        
+        </Col>
+        <Col xl={12} lg={12} md={24} sm={24}>
+       <IncomeVsExpenseChart/>
+        
+        </Col>
+       </Row>
     </StateDashboardLayout>
   );
 };
