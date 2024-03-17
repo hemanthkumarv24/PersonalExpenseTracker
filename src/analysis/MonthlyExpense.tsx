@@ -44,10 +44,10 @@ const ExpensesByMonthChart = () => {
         <div
           style={{
             color: "#07273a",
-            fontSize: "14px",
+            fontSize: "20px",
             fontWeight: 700,
             width: "100%",
-            overflowX: "scroll",
+            overflowX: "hidden",
           }}
         >
           Total Expenses by Month

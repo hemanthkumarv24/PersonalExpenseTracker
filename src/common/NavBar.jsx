@@ -43,7 +43,7 @@ const StyledTable = styled(Table)`
   }
 
   .ant-table-tbody > tr:hover > td {
-    background-color: blue; // Change this to your desired hover background color
+    background-color: #007bff; // Change this to your desired hover background color
   }
 `;
 // const StyledLabel = styled.label`

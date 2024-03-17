@@ -36,18 +36,18 @@ const IncomeVsExpenseChart = () => {
         <div
           style={{
             color: '#07273a',
-            fontSize: '14px',
+            fontSize: '20px',
             fontWeight: 700,
             width: '100%',
-            overflowX: 'scroll',
+            overflowX: 'hidden',
           }}
         >
           Income vs. Expense Comparison
         </div>
       }
-      style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#fff', overflowX: 'auto' }}
+      style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#fff', overflowX: 'hidden' }}
     >
-      <div style={{ width: '100%', overflowX: 'auto', overflowY: 'hidden' }}>
+      <div style={{ width: '100%', overflowX: 'hidden', overflowY: 'hidden' }}>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
             <XAxis dataKey="month" />
