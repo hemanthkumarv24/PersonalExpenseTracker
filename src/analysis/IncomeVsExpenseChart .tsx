@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ReferenceLine, ResponsiveContainer } from 'recharts';
+import { Card } from 'antd';
 import axios from 'axios';
 
 interface MonthlyFinanceData {
@@ -30,17 +31,36 @@ const IncomeVsExpenseChart = () => {
   }, []);
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="month" />
-        <YAxis />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="income" fill="#8884d8" name="Total Income" />
-        <Bar dataKey="expense" fill="#82ca9d" name="Total Expense" />
-      </BarChart>
-    </ResponsiveContainer>
+    <Card
+      title={
+        <div
+          style={{
+            color: '#07273a',
+            fontSize: '14px',
+            fontWeight: 700,
+            width: '100%',
+            overflowX: 'scroll',
+          }}
+        >
+          Income vs. Expense Comparison
+        </div>
+      }
+      style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', background: '#fff', overflowX: 'auto' }}
+    >
+      <div style={{ width: '100%', overflowX: 'auto', overflowY: 'hidden' }}>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="income" fill="#8884d8" name="Total Income" />
+            <Bar dataKey="expense" fill="#82ca9d" name="Total Expense" />
+            <ReferenceLine y={0} stroke="#000" />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+    </Card>
   );
 };
 
