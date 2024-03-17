@@ -19,6 +19,7 @@ import Cards from "./Cards";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import StateDashboardLayout from "../dashboard/DashboardLayout";
+import ExpensesByMonthChart from "./MonthlyExpense";
 // import { report } from "process";
 
 
@@ -66,8 +67,8 @@ const Analytics = () => {
       <Card style={{ background: 'rgba(255, 255, 255, 0)', boxShadow: "0 4px 8px rgba(0, 0, 0, 0)" }}>
        
         
-            <Cards report={undefined} />
-        
+            <Cards/>
+            <ExpensesByMonthChart/>
        </Card>
     </StateDashboardLayout>
   );
