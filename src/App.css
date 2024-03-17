@@ -148,8 +148,12 @@
 
 .no-hover-table thead th:hover {
   background-color: transparent !important; /* Prevent color change on hover */
+  color: #07273A; /* Set the color of the header text */
+
 }
 
 .no-hover-table thead th.ant-table-column-sort {
   background-color: transparent !important; /* Prevent color change on sort */
+  color: #07273A; /* Set the color of the header text */
+
 }
