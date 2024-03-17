@@ -14,7 +14,7 @@ const IncomeVsExpenseChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/finance');
+        const response = await axios.get('http://localhost:3002/totalincomeexpensebymonth');
         const transformedData: MonthlyFinanceData[] = Object.keys(response.data.totalIncomeExpenseByMonth).map((month) => ({
           month,
           income: response.data.totalIncomeExpenseByMonth[month].totalIncome,
