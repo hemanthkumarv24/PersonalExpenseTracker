@@ -528,6 +528,45 @@ app.get('/AccountData', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+app.get('/totalincomeexpensebymonth', async (req, res) => {
+    try {
+        // Retrieve the UserID based on the provided Email
+        const [user] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Fetch all unique months for the user's expenses
+        const uniqueMonths = await poolQuery('SELECT DISTINCT MONTH(Date) AS month FROM expenses WHERE UserID = ?', [user.UserID]);
+
+        // Object to store total income and expense for each month
+        const totalIncomeExpenseByMonth = {};
+
+        // Iterate over each unique month
+        for (const { month } of uniqueMonths) {
+            // Retrieve the month name from the month number (e.g., 1 for January)
+            const monthName = new Date(Date.UTC(2000, month - 1, 1)).toLocaleString('default', { month: 'long' });
+
+            // Calculate the total income for the month
+            const [totalIncomeResult] = await poolQuery('SELECT SUM(Amount) AS totalIncome FROM income WHERE UserID = ? AND MONTH(Date) = ?', [user.UserID, month]);
+            const totalIncome = totalIncomeResult.totalIncome || 0;
+
+            // Calculate the total expense for the month
+            const [totalExpenseResult] = await poolQuery('SELECT SUM(Amount) AS totalExpense FROM expenses WHERE UserID = ? AND MONTH(Date) = ?', [user.UserID, month]);
+            const totalExpense = totalExpenseResult.totalExpense || 0;
+
+            // Store total income and expense for the month in the object
+            totalIncomeExpenseByMonth[monthName] = { totalIncome, totalExpense };
+        }
+
+        // Send the result as JSON response
+        res.json({ totalIncomeExpenseByMonth });
+    } catch (error) {
+        console.error('Error fetching total income and expense by month:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 
 
