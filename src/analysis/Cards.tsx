@@ -14,7 +14,7 @@ const Cards = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("URL_OF_YOUR_API");
+        const response = await axios.get("http://localhost:3002/AccountData");
         // Round balance to 2 decimal points
         response.data.Balance = parseFloat(response.data.Balance.toFixed(2));
         setFinancialData(response.data);

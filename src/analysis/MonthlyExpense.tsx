@@ -16,7 +16,7 @@ const ExpensesByMonthChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("URL_OF_YOUR_API_FOR_EXPENSES");
+        const response = await axios.get("http://localhost:3002/totalexpensesbymonth");
         const data = response.data.totalExpensesByMonth;
         const dataFromReport = Object.keys(data).map((month) => {
           return {
