@@ -60,6 +60,8 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
   const [currentInput, setCurrentInput] = useState<string>('');
   const [currentDescription, setCurrentDescription] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<moment.Moment | null>(null);
+  const today = new Date().toISOString().split('T')[0]; 
+
   const [currentCategory, setCurrentCategory] = useState<string>('');
   const [totalIncome, setTotalIncome] = useState<number>(0);
   console.log(accountnumber['username']);
@@ -186,6 +188,7 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
                 id="dateInput"
                 value={currentDate}
                 onChange={handleDateChange}
+                max={today}
               />
               <StyledLabel htmlFor="categoryInput">Select Income Category:</StyledLabel>
               <br />

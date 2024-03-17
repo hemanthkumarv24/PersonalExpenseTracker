@@ -240,6 +240,8 @@ const ExpenseForm = () => {
     // You can handle further form submission logic here
   };
 
+  const today = new Date().toISOString().split('T')[0]; 
+
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
       <Card style={{ width: '50%', alignSelf: 'center' }}>
@@ -248,8 +250,8 @@ const ExpenseForm = () => {
             fontSize: 25,
             fontWeight: 'bold',
             marginBottom: 10,
-            fontFamily: 'Garamond, Serif', // Change to the desired font
-            color: '#07273A', // Change to the desired color
+            fontFamily: 'Garamond, Serif',
+            color: '#07273A',
           }}
         >
           Add new Expense
@@ -272,6 +274,7 @@ const ExpenseForm = () => {
             value={date}
             onChange={(e) => setDate(e.target.value)}
             required
+            max={today} 
           />
           <StyledLabel htmlFor="category">Category:</StyledLabel>
           <StyledSelect
@@ -301,6 +304,7 @@ const ExpenseForm = () => {
       </Card>
     </div>
   );
+  
 };
 
 
@@ -312,11 +316,13 @@ const RecentTransactions = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get('http://localhost:3002/listexpenses');
-        setData(response.data);
+        const sortedData = response.data.sort((a, b) => new Date(b.Date) - new Date(a.Date)); // Sort by date in descending order
+        setData(sortedData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
+    
 
     fetchData();
   }, []); // Empty dependency array ensures the effect runs only once, after the initial render
@@ -324,25 +330,31 @@ const RecentTransactions = () => {
   const columns = [
     {
       title: 'Amount',
-      dataIndex: 'Amount', // Use 'Amount' instead of 'amount' to match the data key
+      dataIndex: 'Amount',
       key: 'Amount',
+      sorter: (a, b) => a.Amount - b.Amount, // Add sorter for Amount
     },
     {
       title: 'Description',
-      dataIndex: 'Description', // Use 'Description' instead of 'description' to match the data key
+      dataIndex: 'Description',
       key: 'Description',
+      sorter: (a, b) => a.Description.localeCompare(b.Description), // Add sorter for Description
     },
     {
       title: 'Date',
-      dataIndex: 'Date', // Use 'Date' instead of 'date' to match the data key
+      dataIndex: 'Date',
       key: 'Date',
+      render: (text) => text.split('T')[0], // Display only the date part
+      sorter: (a, b) => new Date(a.Date) - new Date(b.Date), // Add sorter for Date
     },
     {
       title: 'Category',
-      dataIndex: 'CategoryName', // Use 'Category' instead of 'category' to match the data key
+      dataIndex: 'CategoryName',
       key: 'CategoryName',
+      sorter: (a, b) => a.CategoryName.localeCompare(b.CategoryName), // Add sorter for Category
     },
   ];
+  
   
 
 
