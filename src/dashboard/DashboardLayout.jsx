@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from 'react-router-dom'; // Assuming you're using React Router for navigation
-
+import { useSelector } from 'react-redux';
 import {
   Button,
   Space,
@@ -33,7 +33,7 @@ const StateDashboardLayout = ({ children }) => {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const stateValue = 'dashboard';
-
+  const username = useSelector(state => state.auth.username);
   const showDrawer = () => {
     setVisible((prev) => !prev);
   };
@@ -302,7 +302,7 @@ const StateDashboardLayout = ({ children }) => {
                   marginRight: "3vw",
                 }}
               >
-                 User 
+                 {username} 
                 <CaretDownOutlined />
               </p>
             </Dropdown>
