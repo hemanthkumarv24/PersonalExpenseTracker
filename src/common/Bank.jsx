@@ -5,7 +5,7 @@ import StateDashboardLayout from "../dashboard/DashboardLayout";
 import { setBank } from '../REdux/bankSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 
 const { Option } = Select;
 
@@ -42,13 +42,13 @@ const StyledSelect = styled(Select)`
 
 const UserBankDetailsForm = () => {
   const [formValues, setFormValues] = useState({
-    BankAccountNumber: '',
+    AccountNumber: '',
     ConfirmBankAccountNumber: '',
-    BankBranchName: '',
+    bank_branch: '',
     IFSCCode: '',
     AccountHoldername: '',
-    NameOfBank: '',
-    Card: '',
+    bank_name: '',
+    Balance: '',
   });
 
   // Handle form input changes
@@ -71,7 +71,7 @@ navigate('/dashboard');
 
     try {
       // Send a POST request to your API endpoint
-      const response = await axios.post('/api/addBankAccount', formValues);
+      const response = await axios.post('http://localhost:3002/createbankaccounts', formValues);
 
       // Handle success response
       console.log(response.data);
@@ -81,18 +81,17 @@ navigate('/dashboard');
       
       // Reset form values after successful submission
       setFormValues({
-        BankAccountNumber: '',
+        AccountNumber: '',
         ConfirmBankAccountNumber: '',
-        BankBranchName: '',
+        bank_branch: '',
         IFSCCode: '',
         AccountHoldername: '',
-        NameOfBank: '',
+        bank_name: '',
         Relationship: '',
       });
     } catch (error) {
       // Handle error response
       console.error('Error adding bank account:', error);
-      message.error('An error occurred while adding the bank account. Please try again later.');
     }
   };
 
@@ -116,12 +115,12 @@ return (
   <StyledForm onSubmit={handleSubmit}>
   <Row gutter={[16, 16]}>
     <Col xs={24} sm={12} md={8}>
-      <StyledLabel htmlFor="BankAccountNumber">Bank Account Number:</StyledLabel>
+      <StyledLabel htmlFor="AccountNumber">Bank Account Number:</StyledLabel>
       <StyledInput
         type="text"
-        id="BankAccountNumber"
-        name="BankAccountNumber"
-        value={formValues.BankAccountNumber}
+        id="AccountNumber"
+        name="AccountNumber"
+        value={formValues.AccountNumber}
         onChange={handleChange}
         required
       />
@@ -138,11 +137,11 @@ return (
       />
     </Col>
     <Col xs={24} sm={12} md={8}>
-      <StyledLabel htmlFor="NameOfBank">Name of Bank:</StyledLabel>
+      <StyledLabel htmlFor="bank_name">Name of Bank:</StyledLabel>
       <br />
       <StyledSelect
-            id="NameOfBank"
-            name="NameOfBank"
+            id="bank_name"
+            name="bank_name"
             // value={bank}
             required
           >
@@ -165,23 +164,23 @@ return (
       />
     </Col>
     <Col xs={24} sm={12} md={8}>
-      <StyledLabel htmlFor="Card">Card Number:</StyledLabel>
+      <StyledLabel htmlFor="Balance">Balance:</StyledLabel>
       <StyledInput
         type="text"
-        id="Card"
-        name="Card"
-        value={formValues.Card}
+        id="Balance"
+        name="Balance"
+        value={formValues.Balance}
         onChange={handleChange}
         required
       />
     </Col>
     <Col xs={24} sm={12} md={8}>
-      <StyledLabel htmlFor="BankBranch">Bank Branch:</StyledLabel>
+      <StyledLabel htmlFor="bank_branch">Bank Branch:</StyledLabel>
       <StyledInput
         type="text"
-        id="BankBranch"
-        name="BankBranch"
-        value={formValues.BankBranch}
+        id="bank_branch"
+        name="bank_branch"
+        value={formValues.bank_branch}
         onChange={handleChange}
         required
       />

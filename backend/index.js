@@ -75,8 +75,8 @@ app.get('/check-account', async (req, res) => {
   
       // Query to check if an account exists for the given UserID
       const accountQuery = 'SELECT * FROM bankaccounts WHERE UserID = ?';
-      const [account] = await poolQuery(accountQuery, [user]);
-  
+      const [account] = await poolQuery(accountQuery, [user.UserID]);
+        console.log("accountttt",account)
       if (!account) {
         // If no account exists for the given UserID
         return res.json({ exists: false, message: 'Account not found for the specified user.' });
@@ -326,17 +326,17 @@ app.get('/updatebalance', async (req, res) => {
 
 
   // Calculate the sum of income entries for the user
-  const [incomeSum] = await poolQuery('SELECT SUM(Amount) AS totalIncome FROM income WHERE UserID = ?', [user]);
+  const [incomeSum] = await poolQuery('SELECT SUM(Amount) AS totalIncome FROM income WHERE UserID = ?', [user.UserID]);
   console.log("Total INcome",incomeSum);
 // Calculate the sum of expense entries for the user
-const [expenseSum] = await poolQuery('SELECT SUM(Amount) AS totalExpense FROM expenses WHERE UserID = ?', [user]);
+const [expenseSum] = await poolQuery('SELECT SUM(Amount) AS totalExpense FROM expenses WHERE UserID = ?', [user.UserID]);
 console.log("Total INcome",expenseSum);
 // Calculate the new balance
 const newBalance = (incomeSum.totalIncome || 0) - (expenseSum.totalExpense || 0);
 console.log("Cureent Balance:",newBalance);
 
 // Update the balance in the bankaccounts table
-await poolQuery('UPDATE bankaccounts SET Balance = ? WHERE UserID = ?', [newBalance,user]);
+await poolQuery('UPDATE bankaccounts SET Balance = ? WHERE UserID = ?', [newBalance,user.UserID]);
 res.send("Success")
 
 });
@@ -347,7 +347,7 @@ app.get('/listexpenses', async (req, res) => {
     try {
         await pool.query(
             'SELECT  expenses.*,  categories.CategoryName FROM expenses JOIN categories ON expenses.CategoryID = categories.CategoryID WHERE userID = ?',
-            [userID],
+            [userID.UserID],
             (error, results) => {
                 if (error) {
                     console.error('Error executing query:', error);
@@ -365,12 +365,12 @@ app.get('/listexpenses', async (req, res) => {
     }
 });
 app.get('/uniquecategory', async (req, res) => {
-    const [userID] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
-
+    //const [userID] = await poolQuery('SELECT UserID FROM users WHERE Email = ?', [Email]);
+       
     try {
         await pool.query(
-            'SELECT DISTINCT categories.CategoryName FROM expenses JOIN categories ON expenses.CategoryID = categories.CategoryID WHERE userID = ?',
-            [userID],
+            'SELECT DISTINCT categories.CategoryName FROM expenses JOIN categories ON expenses.CategoryID = categories.CategoryID ',
+            
             (error, results) => {
                 if (error) {
                     console.error('Error executing query:', error);
@@ -378,7 +378,7 @@ app.get('/uniquecategory', async (req, res) => {
                     return;
                 }
                 const categories = results;
-                console.log("Unique categories data for user ID", userID, ":", categories);
+                console.log("Unique categories data for user ID", ":", categories);
                 res.json(categories);
             }
         );

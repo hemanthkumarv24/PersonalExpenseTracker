@@ -9,7 +9,7 @@ import { light } from "@mui/material/styles/createPalette";
 import { ExpenseForm,RecentTransactions } from "../common/NavBar";
 import StateDashboardLayout from "../dashboard/DashboardLayout";
 import { useSelector, useDispatch } from 'react-redux';
-import {  selectBank } from '../REdux/bankSlice';
+import {  loginSuccess } from '../REdux/authSlice';
 import axios from 'axios';
 const defaultTheme = createTheme();
 
@@ -19,6 +19,7 @@ const Dashboard = () =>  {
   const [balance,setbalance]=useState(0);
   const [accountnumber,setaccountnumber]=useState(0);
   const [username,setusername]=useState('');
+  const dispatch = useDispatch();
   
   useEffect(() => {
 
@@ -31,6 +32,8 @@ const Dashboard = () =>  {
       setaccountnumber(response.data.accountDetails.AccountNumber);
       setusername(response.data.accountDetails.username.Username)
       console.log(condition,balance,accountnumber);
+      dispatch(loginSuccess({userId:'',  userName:username }));
+
 
       console.log(response) // Change the URL to your Express route
       // setData(response.data);

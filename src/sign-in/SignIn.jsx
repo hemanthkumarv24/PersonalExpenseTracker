@@ -35,9 +35,9 @@ function SignIn() {
       console.log('API Response:', response);
   
       // Check if the response contains the expected data structure
-      if (response.data && response.data.UserID && response.data.Username) {
-        const { UserID, Username } = response.data;
-        
+      if (true) {
+        const { UserID, Username } = response.data.data;
+        console.log(UserID,Username)
         // Dispatch the loginSuccess action with the extracted user data
         dispatch(loginSuccess({ UserID, Username }));
   

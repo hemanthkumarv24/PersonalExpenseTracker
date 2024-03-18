@@ -214,6 +214,7 @@ const ExpenseForm = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get('http://localhost:3002/uniquecategory');
+        console.log(response)
         setCategories(response.data); // Assuming the response data is an array of category objects with keys 'CategoryID' and 'CategoryName'
       } catch (error) {
         console.error('Error fetching categories:', error);

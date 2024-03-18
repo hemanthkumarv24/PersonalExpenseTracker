@@ -24,7 +24,7 @@ import {
   CaretDownOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
 
 const { Sider, Content } = Layout;
 
@@ -33,10 +33,28 @@ const StateDashboardLayout = ({ children }) => {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const stateValue = 'dashboard';
-  const username = useSelector(state => state.auth.username);
+  
   const showDrawer = () => {
     setVisible((prev) => !prev);
   };
+  const [username,setusername]=useState('');
+
+console.log(username)
+  useEffect(() => {
+
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3002/check-account');
+      
+        setusername(response.data.accountDetails.username.Username)
+  
+        console.log(response) 
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -57,7 +75,7 @@ const StateDashboardLayout = ({ children }) => {
 
   const signout = (e) => {
     e.preventDefault();
-    navigate("/login");
+    navigate("/sign-in");
   };
 
   const handleCall = (path, page) => {

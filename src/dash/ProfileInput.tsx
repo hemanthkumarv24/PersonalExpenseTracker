@@ -3,6 +3,8 @@ import { Input, Button, Space, Select, DatePicker, Card, Flex, Row, Col } from '
 import moment from 'moment';
 import styled from 'styled-components';
 import axios from 'axios';
+import { loginSuccess } from '../REdux/authSlice';
+import { useDispatch } from 'react-redux';
 
 const { Option } = Select;
 
@@ -92,16 +94,18 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
 
 
   const [balance1,setbalance1]=useState(0);
-  
-  const disabledFutureDate = (currentDate) => {
+  const dispatch = useDispatch();
+    const disabledFutureDate = (currentDate) => {
     return currentDate && currentDate > moment().endOf('day');
   };
 
   const fetchDatabalance= async () => {
     try {
       const response = await axios.get('http://localhost:3002/check-account');
-      
-  
+      const userName = response.data.accountDetails.username.Username;
+      dispatch(loginSuccess({userId:'',  userName:userName }));
+
+      console.log(response);
       setbalance1(response.data.accountDetails.Balance);
       
  
@@ -130,6 +134,7 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
       
       await fetchData();
       await fetchDatabalance();
+      await fetchData();
      
 
       
@@ -202,16 +207,14 @@ const ProfitInput: React.FC = (accountnumber,balance) => {
 
 
 
-                <Option value=" Dining Out"> Dining Out</Option>
-                <Option value="Entertainment">Entertainment</Option>
-                <Option value="Socializing">Socializing</Option>
-                <Option value="Travel">Travel</Option>
-                <Option value="Fitness">Fitness</Option>
-                <Option value="Electronics">Electronics</Option>
-                <Option value="Home Decor">Home Decor</Option>
-                <Option value="Events">Events</Option>
-                <Option value="Education">Education</Option>
-                <Option value="Home Appliances">Home Appliances</Option>
+
+                <Option value="Salary"> Salary </Option>
+                <Option value="Pension">Pension</Option>
+                <Option value="Funds">Funds</Option>
+                <Option value="Chit">Chit</Option>
+                <Option value="Commision">Commision</Option>
+                <Option value="Rent">Rent</Option>
+                
               </StyledSelect>
             </Col>
             <Col md={16} xs={16} sm={16} lg={16}>
